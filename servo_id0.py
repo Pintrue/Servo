@@ -18,16 +18,16 @@ b = mid
 
 try:
 	while(1):
-		for desired_pos in range(-90, 90):
+		for desired_pos in range(-90, 91):
 #			DC = 43.0/900.0*desired_pos+2.7 #2.0 / 45.0 * desired_pos + 3
 			DC = m * desired_pos + b
 			pwm.ChangeDutyCycle(DC)
-			time.sleep(.04)
-		for desired_pos in range(90, -90, -1):
+			time.sleep(0.04)
+		for desired_pos in range(90, -91, -1):
 #			DC = 43.0/900.0*desired_pos+2.7
 			DC = m * desired_pos + b
 			pwm.ChangeDutyCycle(DC)
-			time.sleep(.04)
+			time.sleep(0.04)
 except KeyboardInterrupt:
 	print "\nUser input KeyboardInterrput"
 
