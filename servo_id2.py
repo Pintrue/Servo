@@ -6,7 +6,7 @@ servo = 13
 GPIO.setup(servo, GPIO.OUT)
 pwm = GPIO.PWM(servo, 50)
 
-left, right, mid = 2.2, 4.0, 3.1
+left, right, mid = 3.0, 7.3, 5.15
 pwm.start(right)
 
 # servo 2: left->2.2, right->4.0, mid->3.1
