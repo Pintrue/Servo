@@ -43,24 +43,25 @@ try:
 	while ja0 < -90 or ja0 > 90:
 		ja0 = input("Illegal value for BASE SERVO. PLZ try again\n\t")
 
-	to_ja0 = 0
-	while ja0 != 0:
-#		print "Remain " + str(ja0) + " to turn\n"
-		delta0 = min(clipped_angle, max(-clipped_angle, ja0))
-#		print "Move thru " + str(delta0) + "\n"
-		#delta0 += min(clipped_angle, ja0)
-		to_ja0 += delta0
-		DC0 = m0 * to_ja0 + b0
-#		print "Change to duty cylce" + str(DC0) + "\n"
-		pwm0.ChangeDutyCycle(DC0)
-		time.sleep(0.5)
-		ja0 -= delta0
-
-
 	ja1 = input("Joint angle of SHOULDER SERVO?\n\t")
         while ja1 < -120 or ja1 > 0:
                 ja1 = input("Illegal value for SHOULDER SERVO. PLZ try again\n\t")
 
+	ja2 = input("Joint angle of FOREARM SERVO?\n\t")
+        while ja2 < -90 or ja0 > 0:
+                ja0 = input("Illegal value for FOREARM SERVO. PLZ try again\n\t")
+
+		
+	to_ja0 = 0
+	while ja0 != 0:
+		delta0 = min(clipped_angle, max(-clipped_angle, ja0))
+		to_ja0 += delta0
+		DC0 = m0 * to_ja0 + b0
+		pwm0.ChangeDutyCycle(DC0)
+		time.sleep(0.5)
+		ja0 -= delta0
+
+		
 	to_ja1 = 0
 	while ja1 != 0:
 		delta1 = min(clipped_angle, max(-clipped_angle, ja1))
@@ -70,11 +71,7 @@ try:
 		time.sleep(0.5)
 		ja1 -= delta1
 
-
-	ja2 = input("Joint angle of FOREARM SERVO?\n\t")
-        while ja2 < -90 or ja0 > 0:
-                ja0 = input("Illegal value for FOREARM SERVO. PLZ try again\n\t")
-
+		
 	to_ja2 = 0
 	while ja2 != 0:
 		delta2 = min(clipped_angle, max(-clipped_angle, ja2))
