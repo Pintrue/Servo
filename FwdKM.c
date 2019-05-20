@@ -38,7 +38,7 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 	 **/
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
-	arm->a4 += jntArray[2];
+	arm->a4 -= jntArray[2] + jntArray[1];
 	double d2 = arm->baseHeight;
 	double d3 = arm->l1 * sin(arm->a2);
 	double d4 = arm->l2 * sin(arm->a3);
@@ -46,7 +46,9 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 
 	double y = d2 + d3 + d4 + d5;
 	// printf("y is equal to %f \n", y);
-	// printf("d5 is equal to %f \n", d5);
+	printf("a3 is equal to %f \n", arm->a3);
+	printf("d4 is equal to %f \n", d4);
+	printf("d5 is equal to %f \n", d5);
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -88,7 +90,7 @@ int main() {
 	// printf("%f ", arm->l2);
 	// printf("%f ", arm->l3);
 	// printf("\n");
-	double delta[3] = {0, 1.2, 0.0};
+	double delta[3] = {1.3, 1.2, -1.2};
 	double* res = getPoseByJnts(delta);
 	printf("[ ");
 	for (int i = 0; i < 3; ++i) {
