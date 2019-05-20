@@ -39,16 +39,13 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
+
 	double d2 = arm->baseHeight;
 	double d3 = arm->l1 * sin(arm->a2);
 	double d4 = arm->l2 * sin(arm->a3);
 	double d5 = arm->l3 * sin(arm->a4);
 
 	double y = d2 + d3 + d4 + d5;
-	// printf("y is equal to %f \n", y);
-	printf("a3 is equal to %f \n", arm->a3);
-	printf("d4 is equal to %f \n", d4);
-	printf("d5 is equal to %f \n", d5);
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -61,20 +58,17 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 	 * 
 	 * 					d1 = d6 - d7 + d8
 	 **/
-	// double a5 = arm->a3 + arm->a2;
 
 	double d6 = arm->l3 * cos(arm->a4);
 	double d7 = arm->l2 * cos(arm->a3);
 	double d8 = arm->l1 * cos(arm->a2);
 
 	double d1 = d6 - d7 + d8;
-	// printf("d1 is equal to %f \n", d1);
-	// printf("d5 is equal to %f \n", d5);
-	// printf("d6 is equal to %f \n", d6);
-	// printf("d7 is equal to %f \n", d7);
+
 	double z = d1 * cos(arm->a1);
 	double x = d1 * sin(arm->a1);
 	double* coord = (double*) calloc(CART_COORD_DIM, sizeof(double));
+	
 	coord[0] = TO_DECIMAL_PLACE(x, 2); coord[1] = TO_DECIMAL_PLACE(y, 2); coord[2] = TO_DECIMAL_PLACE(z, 2);
 	return coord;
 }
@@ -82,15 +76,10 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 
 int main() {
 	double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	// double initJntAngles[3] = {0.0, 0.18700, 0.18797};
 	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
 	arm = init(linkLength, 4.20, initJntAngles);
 
-	// printf("%f ", arm->l1);
-	// printf("%f ", arm->l2);
-	// printf("%f ", arm->l3);
-	// printf("\n");
-	double delta[3] = {1.3, 1.2, -1.2};
+	double delta[3] = {0.7, 0.5, -0.9};
 	double* res = getPoseByJnts(delta);
 	printf("[ ");
 	for (int i = 0; i < 3; ++i) {
