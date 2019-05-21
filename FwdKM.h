@@ -27,7 +27,7 @@ typedef struct _threeDOFs {
 } threeDOFs;
 
 
-int init();
+int initKM();
 
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 

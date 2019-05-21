@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BOARD)
-servo = 7
+servo0, servo1, servo2 = 7, 11, 13
 GPIO.setup(servo, GPIO.OUT)
 pwm = GPIO.PWM(servo, 50)
 pwm.start(7)
