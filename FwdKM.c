@@ -8,9 +8,15 @@
 
 static threeDOFs* arm;
 
-threeDOFs* init(double linkLength[JNT_NUMBER], double baseHeight,
-			double initJntAngles[JNT_NUMBER]) {
-	threeDOFs* arm = (threeDOFs*) malloc(sizeof(threeDOFs));
+
+int init() {
+	/* DESCRIPTION of the arm */
+	double linkLength[3] = {5.9908, 10.7575, 18.7299};
+	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
+	double baseHeight = 4.20;
+
+
+	arm = (threeDOFs*) malloc(sizeof(threeDOFs));
 
 	arm->l1 = linkLength[0];
 	arm->l2 = linkLength[1];
@@ -18,27 +24,41 @@ threeDOFs* init(double linkLength[JNT_NUMBER], double baseHeight,
 
 	arm->baseHeight = baseHeight;
 
-	// for (int i = 0; i < JNT_NUMBER; ++i) {
-	// 	arm->jntAngles[i] = initJntAngles[i];
-	// }
 	arm->a1 = initJntAngles[0];
 	arm->a2 = 0.58337;
 	arm->a3 = initJntAngles[1];
 	arm->a4 = initJntAngles[2];
 
-	return arm;
+	return 0;
 }
 
 
-double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
+int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
 	/**
 	 * Calculate y from a side view, where y has the following eqaution
 	 * 
 	 * 					y = d2 + d3 + d4 + d5
 	 **/
+
+
+	if (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
+		jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
+		jntArray[2] > JNT2_U || jntArray[2] < JNT2_L) {
+		
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
+
+	// double a1 = arm->a1 + jntArray[0];
+	// double a3 = arm->a3 + jntArray[1];
+	// double a4 = arm->a4 - jntArray[2] - jntArray[1];
+
+	// arm->a1 = a1;
+	// arm->a3 = a3;
+	// arm->a4 = a4;
 
 	double d2 = arm->baseHeight;
 	double d3 = arm->l1 * sin(arm->a2);
@@ -67,24 +87,36 @@ double* getPoseByJnts(double jntArray[JNT_NUMBER]) {
 
 	double z = d1 * cos(arm->a1);
 	double x = d1 * sin(arm->a1);
-	double* coord = (double*) calloc(CART_COORD_DIM, sizeof(double));
-	
-	coord[0] = TO_DECIMAL_PLACE(x, 2); coord[1] = TO_DECIMAL_PLACE(y, 2); coord[2] = TO_DECIMAL_PLACE(z, 2);
-	return coord;
+
+	eePos[0] = TO_DECIMAL_PLACE(x, 2); eePos[1] = TO_DECIMAL_PLACE(y, 2); eePos[2] = TO_DECIMAL_PLACE(z, 2);
+	eePos[3] = jntArray[1] + jntArray[2];
+	eePos[4] = jntArray[0];
+	eePos[5] = 0;
+
+	return 0;
+}
+
+
+int finish() {
+	free(arm);
+	return 0;
 }
 
 
 int main() {
-	double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
-	arm = init(linkLength, 4.20, initJntAngles);
+	init();
 
-	double delta[3] = {0.7, 0.5, -0.9};
-	double* res = getPoseByJnts(delta);
-	printf("[ ");
-	for (int i = 0; i < 3; ++i) {
-		printf("%f ", res[i]);
+	double delta[3] = {-0.3, 0.99, -1.57};
+	double eePos[POSE_FRAME_DIM];
+	int res = getEEPoseByJnts(delta, eePos);
+	if (res < 0) {
+		printf("Angle out of bound.\n");
+	} else {
+		printf("[ ");
+		for (int i = 0; i < 6; ++i) {
+			printf("%f ", eePos[i]);
+		}
+		printf("]\n");
 	}
-	printf("]\n");
 	return 0;
 }

@@ -3,12 +3,16 @@
 
 #define JNT_NUMBER 3
 #define CART_COORD_DIM 3
-#define JA0_L -M_PI/2
-#define JA0_U M_PI/2
-#define JA1_L 0.0
-#define JA1_U 120.0/180.0*M_PI
-#define JA2_L -M_PI/2
-#define JA2_U 0.0
+#define POSE_FRAME_DIM 6
+
+#define JNT0_L -M_PI/2
+#define JNT0_U M_PI/2
+#define JNT1_L 0.0
+#define JNT1_U 120.0/180.0*M_PI
+#define JNT2_L -M_PI/2
+#define JNT2_U 0.0
+
+#define JNT_ANGLES_OUT_OF_BOUND -100
 
 // enum _Axis {
 // 	none = 0,
@@ -23,9 +27,11 @@ typedef struct _threeDOFs {
 } threeDOFs;
 
 
-threeDOFs* init(double linkLength[JNT_NUMBER], double baseHeight,
-			double initJntAngles[JNT_NUMBER]);
+int init();
 
-double* getPoseByJnts(double jntArray[JNT_NUMBER]);
+int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+
+int finish();
+
 
 #endif
