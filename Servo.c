@@ -13,6 +13,7 @@
 #define BASE_SERVO_GPIO_PIN 4
 #define SHOULDER_SERVO_GPIO_PIN 17
 #define FOREARM_SERVO_GPIO_PIN 27
+#define MAGNET_GPIO_PIN 26
 
 #define BASE_RANGE M_PI
 #define SHOULDER_RANGE ((120.0 / 180.0) * M_PI)
@@ -32,7 +33,6 @@ int run = 1;
 int used[3] = {BASE_SERVO_GPIO_PIN, SHOULDER_SERVO_GPIO_PIN, FOREARM_SERVO_GPIO_PIN};
 double jntAngles[3];
 double goal[3];
-int shoulderLastDC;
 
 
 void init() {
@@ -40,6 +40,7 @@ void init() {
 		exit(0);
 	}
 	
+	/* Initialize the three servo signals */
 	for (int i = 0; i < NUM_OF_SERVO; ++i) {
 		int pin = used[i];
 		gpioSetPWMfrequency(pin, 50);
@@ -53,7 +54,10 @@ void init() {
 		jntAngles[i] = 0;
 	}
 
-	shoulderLastDC = SHOULDER_LEFT;
+	gpioSetMode(MAGNET_GPIO_PIN, PI_OUTPUT);
+	// gpioPWM(MAGNET_GPIO_PIN, gpioGetPWMrange(MAGNET_GPIO_PIN) / 2);
+	gpioPWM(MAGNET_GPIO_PIN, 140);
+	printf("Range for %d is %d\n", MAGNET_GPIO_PIN, gpioGetPWMrange(MAGNET_GPIO_PIN));
 }
 
 
@@ -89,7 +93,7 @@ matrix_t* initObs(double target[3]) {
 
 void convertAnglesToDC(int dutyCycles[3], double shoulderDelta) {
 	/* BASE SERVO */
-	double m0 = (BASE_LEFT - BASE_RIGHT) / BASE_RANGE;
+	double m0 = (BASE_RIGHT - BASE_LEFT) / BASE_RANGE;
 	double b0 = BASE_MID;
 
 	dutyCycles[0] = (int) roundf(m0 * jntAngles[0] + b0);
@@ -142,6 +146,7 @@ matrix_t* evalStep(matrix_t* action) {
 
 	double eePos[6];
 	initKM();
+
 	int res = getEEPoseByJnts(jntAngles, eePos);
 
 
@@ -180,22 +185,32 @@ void stop(int signum) {
 int main(int argc, char *argv[]) {
 	init();
 
-	double target[3] = {-8.432371e+00, 0.000000e+00, 2.042364e+01};
-	matrix_t* obs = initObs(target);
-	print_matrix(obs, 1);
-
-	model* model = load_model("DDPG_ACTOR_SIM_NORM.model");
-	normalizer* norm = load_normalizer("DDPG_NORM_SIM_NORM.norm");
-
-
-	for (int i = 0; i < 50; ++i) {
-		print_matrix(obs, 1);
-		normalize_obs(norm, obs);
-		predict(model, obs);
-		obs = evalStep(obs);
-		printf("Done %d\n", i);
+	while (1) {
+		int stop = 0;
+		scanf("%d", &stop);
+		if (stop == 1) {
+			// gpioWrite(MAGNET_GPIO_PIN, 0);
+			gpioPWM(MAGNET_GPIO_PIN, 0);
+			return 0;
+		}
 		time_sleep(0.5);
 	}
+	// double target[3] = { -7.495477e+00,0.000000e+00,1.870172e+01 };
+	// matrix_t* obs = initObs(target);
+	// print_matrix(obs, 1);
+
+	// model* model = load_model("DDPG_ACTOR_SIM_NORM.model");
+	// normalizer* norm = load_normalizer("DDPG_NORM_SIM_NORM.norm");
+
+
+	// for (int i = 0; i < 50; ++i) {
+	// 	print_matrix(obs, 1);
+	// 	normalize_obs(norm, obs);
+	// 	predict(model, obs);
+	// 	obs = evalStep(obs);
+	// 	printf("Done %d\n", i);
+	// 	time_sleep(0.5);
+	// }
 
 	//gpioPWM(FOREARM_SERVO_GPIO_PIN, 60);
 	// for (int i = 0; i < 10; ++i) {
