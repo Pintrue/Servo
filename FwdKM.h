@@ -29,6 +29,9 @@ typedef struct _threeDOFsFwd {
 
 int initFwdKM();
 
+int getJntPosByAngle(const double jntArray[JNT_NUMBER],
+						double allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
+
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
 int finish();
