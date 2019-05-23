@@ -6,17 +6,17 @@
 #define TO_DECIMAL_PLACE(v, n) (roundf(v * pow(10, n)) / pow(10, n))
 
 
-static threeDOFs* arm;
+static threeDOFsFwd* arm;
 
 
-int initKM() {
+int initFwdKM() {
 	/* DESCRIPTION of the arm */
 	double linkLength[3] = {5.9908, 10.7575, 18.7299};
 	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
 	double baseHeight = 4.20;
 
 
-	arm = (threeDOFs*) malloc(sizeof(threeDOFs));
+	arm = (threeDOFsFwd*) malloc(sizeof(threeDOFsFwd));
 
 	arm->l1 = linkLength[0];
 	arm->l2 = linkLength[1];
@@ -104,7 +104,7 @@ int finish() {
 
 
 int main() {
-	initKM();
+	initFwdKM();
 
 	double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
 	double eePos[POSE_FRAME_DIM];

@@ -70,7 +70,7 @@ matrix_t* initObs(double target[3]) {
 	}
 
 	double eePos[6];
-	initKM();
+	initFwdKM();
 	int res = getEEPoseByJnts(jntAngles, eePos);
 
 	if (res < 0) {
@@ -145,7 +145,7 @@ matrix_t* evalStep(matrix_t* action) {
 	}
 
 	double eePos[6];
-	initKM();
+	initFwdKM();
 
 	int res = getEEPoseByJnts(jntAngles, eePos);
 
