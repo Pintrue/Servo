@@ -1,6 +1,10 @@
 #ifndef FWDKM_H
 #define FWDKM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define JNT_NUMBER 3
 #define CART_COORD_DIM 3
 #define POSE_FRAME_DIM 6
@@ -34,7 +38,12 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
-int finish();
+int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]);
 
+int finishFwdKM();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

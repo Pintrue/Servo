@@ -156,26 +156,88 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 }
 
 
-int finish() {
+int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]) {
+	/* set the pose for neck joint */
+	allPoss[0][0] = 0; allPoss[0][1] = arm->baseHeight; allPoss[0][2] = 0;
+	allPoss[0][3] = 0; allPoss[0][4] = jntArray[0]; allPoss[0][5] = 0;
+
+	int check;
+	initFwdKM();
+	double poss[2][CART_COORD_DIM];
+	check = getJntPosByAngle(jntArray, poss, 2);
+	if (check < 0) {
+		printf("Joint angle sent to getAllPossByJnts() is out of bound.\n");
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		for (int j = 0; j < CART_COORD_DIM; ++j) {
+			allPoss[i + 1][j] = poss[i][j];
+		}
+	}
+
+	allPoss[1][4] = jntArray[0]; allPoss[2][4] = jntArray[0];
+	allPoss[2][3] = jntArray[1];
+
+	initFwdKM();
+	double eePos[POSE_FRAME_DIM];
+	check = getEEPoseByJnts(jntArray, eePos);
+	if (check < 0) {
+		// shouldnt get here
+		printf("Joint angle sent to getAllPossByJnts() is out of bound.\n");
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+
+	for (int i = 0; i < POSE_FRAME_DIM; ++i) {
+		allPoss[3][i] = eePos[i];
+	}
+
+	return 0;
+}
+
+
+int finishFwdKM() {
 	free(arm);
 	return 0;
 }
 
 
 // int main() {
-// 	initFwdKM();
 
-// 	double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
+// 	// double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
+// 	double delta[3] = {0.5, 0.0, -0.7};
+
+// 	double allPoss[4][6];
 // 	double eePos[POSE_FRAME_DIM];
-// 	int res = getEEPoseByJnts(delta, eePos);
+
+// 	initFwdKM();
+// 	int res = getAllPossByJnts(delta, allPoss);
 // 	if (res < 0) {
 // 		printf("Angle out of bound.\n");
 // 	} else {
-// 		printf("[ ");
-// 		for (int i = 0; i < 6; ++i) {
-// 			printf("%f ", eePos[i]);
+// 		// printf("[ ");
+// 		for (int i = 0; i < 4; ++i) {
+// 			printf("[ ");
+// 			for (int j = 0; j < 6; ++j) {
+// 				printf("%f ", allPoss[i][j]);
+// 			}
+// 			printf("]\n");
 // 		}
-// 		printf("]\n");
 // 	}
-// 	return 0;
+// 	finishFwdKM();
+
+
+// 	// initFwdKM();
+// 	// int res = getEEPoseByJnts(delta, eePos);
+// 	// if (res < 0) {
+// 	// 	printf("Angle out of bound.\n");
+// 	// } else {
+// 	// 	printf("[ ");
+// 	// 	for (int i = 0; i < 6; ++i) {
+// 	// 		printf("%f ", eePos[i]);
+// 	// 	}
+// 	// 	printf("]\n");
+// 	// }
+
+// 	// return 0;
 // }

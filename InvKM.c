@@ -65,6 +65,12 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 	double d2 = M_PI - dShoulderEEAngle - loC3 - arm->initA3;
 	double d3 = arm->initA3 + arm->initA4 - loC4;
 
+	printf("[ ");
+	printf("%f ", d1);
+	printf("%f ", d2);
+	printf("%f ", d3);
+	printf("]\n");
+
 	if (d1 > JNT0_U || d1 < JNT0_L ||
 		d2 > JNT1_U || d2 < JNT1_L ||
 		d3 > JNT2_U || d3 < JNT2_L) {
@@ -84,32 +90,33 @@ int finishInvKM() {
 }
 
 
-// int main() {
-// 	initInvKM();
+int main() {
+	initInvKM();
 
-// 	double eePos[POSE_FRAME_DIM] = {-3.563496e+00, 5.000000e-01, 1.765392e+01};
-// 	// double eePos[POSE_FRAME_DIM] = {-2.360000, 11.800000, 13.460000};
-// 	double jntArray[JNT_NUMBER];
+	double eePos[POSE_FRAME_DIM] = {8.605749e+00, 0.000000e+00, 2.05e+01};
+	// double eePos[POSE_FRAME_DIM] = {-3.563496e+00, 5.000000e-01, 1.765392e+01};
+	// double eePos[POSE_FRAME_DIM] = {-2.360000, 11.800000, 13.460000};
+	double jntArray[JNT_NUMBER];
 
-// 	if (getJntsByEEPos(eePos, jntArray) >= 0) {
-// 		printf("[ ");
-// 		for (int i = 0; i < 3; ++i) {
-// 			printf("%f ", jntArray[i]);
-// 		}
-// 		printf("]\n");
-// 	} else {
-// 		printf("EE Pos not in eligible range.\n");
-// 	}
+	if (getJntsByEEPos(eePos, jntArray) >= 0) {
+		printf("[ ");
+		for (int i = 0; i < 3; ++i) {
+			printf("%f ", jntArray[i]);
+		}
+		printf("]\n");
+	} else {
+		printf("EE Pos not in eligible range.\n");
+	}
 
-// 	// initFwdKM();
-// 	// double angle[3] = {0, 0, 0};
-// 	// double allPoss[2][3];
-// 	// getJntPosByAngle(angle, allPoss, 2);
-// 	// for (int i = 0; i < 2; ++i) {
-// 	// 	printf("[ ");
-// 	// 	for (int j = 0; j < 3; ++j) {
-// 	// 		printf("%f ", allPoss[i][j]);
-// 	// 	}
-// 	// 	printf("]\n");
-// 	// }
-// }
+	// initFwdKM();
+	// double angle[3] = {0, 0, 0};
+	// double allPoss[2][3];
+	// getJntPosByAngle(angle, allPoss, 2);
+	// for (int i = 0; i < 2; ++i) {
+	// 	printf("[ ");
+	// 	for (int j = 0; j < 3; ++j) {
+	// 		printf("%f ", allPoss[i][j]);
+	// 	}
+	// 	printf("]\n");
+	// }
+}
