@@ -8,13 +8,20 @@ extern "C" {
 #define JNT_NUMBER 3
 #define CART_COORD_DIM 3
 #define POSE_FRAME_DIM 6
+#define POSS_NUMBER 4
+
+#ifndef M_PI
+	#define M_PI 3.14159265359
+#endif
 
 #define JNT0_L -M_PI/2
 #define JNT0_U M_PI/2
 #define JNT1_L 0.0
-#define JNT1_U 120.0/180.0*M_PI
+#define JNT1_U 130.0/180.0*M_PI
 #define JNT2_L -M_PI/2
 #define JNT2_U 0.0
+
+#define MAGNET_EE_OFFSET 2.1
 
 #define JNT_ANGLES_OUT_OF_BOUND -100
 

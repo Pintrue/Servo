@@ -11,9 +11,13 @@ static threeDOFsFwd* arm;
 
 int initFwdKM() {
 	/* DESCRIPTION of the arm */
-	double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
-	double baseHeight = 4.20;
+	// double linkLength[3] = {5.9908, 10.7575, 18.7299};
+	// double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
+	// double baseHeight = 4.20;
+
+	double linkLength[3] = {sqrt(3.5*3.5+3.9*3.9), sqrt(1.7*1.7+10.5*10.5), sqrt(3.5*3.5+16.5*16.5)};
+	double initJntAngles[3] = {0.0, atan2(1.7, 10.50), atan2(3.5, 16.5)};
+	double baseHeight = 2.9;
 
 
 	arm = (threeDOFsFwd*) malloc(sizeof(threeDOFsFwd));
@@ -25,7 +29,8 @@ int initFwdKM() {
 	arm->baseHeight = baseHeight;
 
 	arm->a1 = initJntAngles[0];
-	arm->a2 = 0.58337;
+	// arm->a2 = 0.58337;
+	arm->a2 = atan2(3.5, 3.9);
 	arm->a3 = initJntAngles[1];
 	arm->a4 = initJntAngles[2];
 
@@ -46,13 +51,12 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 		
 		return JNT_ANGLES_OUT_OF_BOUND;
 	}
-	printf("get to here\n");
 
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
 
-	double shoulderCoord[CART_COORD_DIM], forearmCoord[CART_COORD_DIM], eeCoord[CART_COORD_DIM];
+	double shoulderCoord[CART_COORD_DIM], forearmCoord[CART_COORD_DIM];
 
 	/* calculate the coordinate of shoulder arm joint */
 
@@ -142,7 +146,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	double d7 = arm->l2 * cos(arm->a3);
 	double d8 = arm->l1 * cos(arm->a2);
 
-	double d1 = d6 - d7 + d8;
+	double d1 = d6 - d7 + d8 + MAGNET_EE_OFFSET;
 
 	double z = d1 * cos(arm->a1);
 	double x = d1 * sin(arm->a1);
@@ -156,7 +160,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 }
 
 
-int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]) {
+int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
 	/* set the pose for neck joint */
 	allPoss[0][0] = 0; allPoss[0][1] = arm->baseHeight; allPoss[0][2] = 0;
 	allPoss[0][3] = 0; allPoss[0][4] = jntArray[0]; allPoss[0][5] = 0;
@@ -202,16 +206,22 @@ int finishFwdKM() {
 }
 
 
+threeDOFsFwd* getCache() {
+	return arm;
+}
+
+
 // int main() {
 
 // 	// double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
-// 	double delta[3] = {0.5, 0.0, -0.7};
+// 	double delta[3] = {0.0, 0.7, 0.0};
 
-// 	double allPoss[4][6];
+// 	// double allPoss[4][6];
 // 	double eePos[POSE_FRAME_DIM];
 
 // 	initFwdKM();
-// 	int res = getAllPossByJnts(delta, allPoss);
+// 	int res = getEEPoseByJnts(delta, eePos);
+// 	// int res = getAllPossByJnts(delta, allPoss);
 // 	if (res < 0) {
 // 		printf("Angle out of bound.\n");
 // 	} else {
@@ -219,25 +229,27 @@ int finishFwdKM() {
 // 		for (int i = 0; i < 4; ++i) {
 // 			printf("[ ");
 // 			for (int j = 0; j < 6; ++j) {
-// 				printf("%f ", allPoss[i][j]);
+// 				// printf("%f ", allPoss[i][j]);
+// 				printf("%f", eePos[i]);
 // 			}
 // 			printf("]\n");
 // 		}
 // 	}
+// 	printf("a1 is %f\n", getCache()->a4);
 // 	finishFwdKM();
 
 
-// 	// initFwdKM();
-// 	// int res = getEEPoseByJnts(delta, eePos);
-// 	// if (res < 0) {
-// 	// 	printf("Angle out of bound.\n");
-// 	// } else {
-// 	// 	printf("[ ");
-// 	// 	for (int i = 0; i < 6; ++i) {
-// 	// 		printf("%f ", eePos[i]);
-// 	// 	}
-// 	// 	printf("]\n");
-// 	// }
+	// initFwdKM();
+	// int res = getEEPoseByJnts(delta, eePos);
+	// if (res < 0) {
+	// 	printf("Angle out of bound.\n");
+	// } else {
+	// 	printf("[ ");
+	// 	for (int i = 0; i < 6; ++i) {
+	// 		printf("%f ", eePos[i]);
+	// 	}
+	// 	printf("]\n");
+	// }
 
-// 	// return 0;
+	// return 0;
 // }
