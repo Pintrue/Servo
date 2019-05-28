@@ -23,7 +23,7 @@ pwm1 = GPIO.PWM(servo1, 50)
 
 left1, right1, mid1 = 7.9, 2.2, 5.05
 pwm1.start(left1)
-m1 = (left1 - right1) / 120.0
+m1 = (right1 - left1) / 120.0
 b1 = left1
 
 # forearm servo
@@ -44,7 +44,7 @@ try:
 		ja0 = input("Illegal value for BASE SERVO. PLZ try again\n\t")
 
 	ja1 = input("Joint angle of SHOULDER SERVO?\n\t")
-        while ja1 < -120 or ja1 > 0:
+        while ja1 < 0 or ja1 > 120:
                 ja1 = input("Illegal value for SHOULDER SERVO. PLZ try again\n\t")
 
 	ja2 = input("Joint angle of FOREARM SERVO?\n\t")
